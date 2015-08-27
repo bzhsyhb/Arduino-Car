@@ -9,6 +9,8 @@ void setup() {
     pinMode(left2, OUTPUT);
     pinMode(right1, OUTPUT);
     pinMode(right2,OUTPUT);
+    pinMode(trig, OUTPUT);
+    pinMode(echo, INPUT);
 }
 
 void loop() {
