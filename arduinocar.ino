@@ -53,7 +53,7 @@ void loop() {
     delay(200);   //去扰动
 
 
-    if (Auto == 1)            //自动避障模式
+    if (Auto == 1)            //自动避障模式（有错误）
     {
         for (i=0;i<4;i++)
         {
@@ -237,7 +237,6 @@ void rotate()
 
     digitalWrite(left2, LOW);
     digitalWrite(right1, LOW);
-
 }
 
 int maxx()
