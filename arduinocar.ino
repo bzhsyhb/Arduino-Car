@@ -47,7 +47,7 @@ void loop() {
     if (irrecv.decode(&results))      //确定&改变模式
     {
         irrecv.resume();
-        //Serial.println(results.value,HEX);
+        Serial.println(results.value,HEX);
 
         if (results.value == manu0) Auto = 0;
         else if (results.value == auto1) Auto = 1;
@@ -116,14 +116,18 @@ void loop() {
                 lastr1 = 1;
                 lastr2 = 0;
 
-                if (judge_dis() <= 4)
+                if (judge_dis() <= 4)          //前进防撞功能
                 {
                     digitalWrite(left1, LOW);
                     digitalWrite(left2, LOW);
                     digitalWrite(right1, LOW);
                     digitalWrite(right2, LOW);
 
-                    digitalWrite(led, HIGH);
+                    digitalWrite(led, HIGH);       //同时有警示灯亮
+                }
+                else
+                {
+                    digitalWrite(led,LOW);
                 }
 
             }
@@ -203,7 +207,7 @@ void loop() {
                 digitalWrite(right1, lastr1);
                 digitalWrite(right2, lastr2);
 
-                if (judge_dis() <= 4 && judgego(lastl1,lastl2,lastr1,lastr2))
+                if (judge_dis() <= 4 && judgego(lastl1,lastl2,lastr1,lastr2))  //前进防撞
                 {
                     digitalWrite(left1, LOW);
                     digitalWrite(left2, LOW);
@@ -211,6 +215,10 @@ void loop() {
                     digitalWrite(right2, LOW);
 
                     digitalWrite(led, HIGH);
+                }
+                else
+                {
+                    digitalWrite(led, LOW);
                 }
             }
 
@@ -234,6 +242,7 @@ int judgego(int s1, int s2, int s3, int s4)
 {
     if (s1 == 1 && s2 == 0 && s3 == 1 && s4 == 0)
         return 1;
+    else return 0;
 }
 
 int judge_dis()
