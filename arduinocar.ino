@@ -21,7 +21,8 @@ const long manu0=0xFF6897,      //遥控器键的值
            go=0XFF18E7, 
            back=0XFF4AB5, 
            trnleft=0xFF10EF, 
-           trnright=0xFF5AA5;
+           trnright=0xFF5AA5,
+           nul=0xFFFFFFFF;
 
 int RECV_PIN = 6;
 
@@ -47,7 +48,7 @@ void loop() {
     if (irrecv.decode(&results))      //确定&改变模式
     {
         irrecv.resume();
-        Serial.println(results.value,HEX);
+        //Serial.println(results.value,HEX);
 
         if (results.value == manu0) Auto = 0;
         else if (results.value == auto1) Auto = 1;
@@ -59,20 +60,44 @@ void loop() {
     {
         for (i=0;i<4;i++)
         {
-        a[i] = judge_dis();   //测好当前距离之后旋转90度
-        Serial.println(a[i]);
-        rotate();
-        delay(500);       //停一下（为了看起来不是很蠢
+            if (irrecv.decode(&results))         //模式切换判断#1
+            {
+                irrecv.resume();
+                if (results.value == manu0) 
+                {
+                    Auto = 0;
+                    break;
+                }
+            }
+
+            a[i] = judge_dis();   //测好当前距离之后旋转90度
+            Serial.println(a[i]);
+            rotate();
+            delay(500);       //停一下（为了看起来不是很蠢
         }
+
+        if (irrecv.decode(&results))         //模式切换判断#2
+            {
+                irrecv.resume();
+                if (results.value == manu0) Auto = 0;
+            }
 
         num = maxx();             //选出距离最大值的编号
 
         for (i=0;i<num;i++) rotate();    //旋转到距离最大的方向
 
-        Serial.println(num);
+        //Serial.println(num);
 
         while (true)
         {
+            if (irrecv.decode(&results))         //模式切换判断#3
+            {
+                irrecv.resume();
+                if (results.value == manu0) Auto = 0;
+            }
+            if (Auto == 0) break;                //跳出自动模式
+
+
             analogWrite(spd1,spd[1]);    //自动模式下速度固定
             analogWrite(spd2, spd[1]);
 
@@ -83,7 +108,7 @@ void loop() {
             delay(800);                  //延时，设置每次距离判断间隔时间
 
             int dd = judge_dis();    
-            if (dd <= 30) 
+            if (dd <= 10) 
             {
                 digitalWrite(left1, LOW);
                 digitalWrite(right1, LOW);
@@ -100,7 +125,6 @@ void loop() {
         if (irrecv.decode(&results))  //检测到按键，改变或保持当前状态
         {
             //Serial.println("read");
-            //Serial.println("manual_true");
             if (results.value == go)               //前进
             {
                 analogWrite(spd1, nowspd);         //设置速度
@@ -197,7 +221,7 @@ void loop() {
                 if (tmp < 0) tmp = 0;              //边界
                 nowspd = spd[tmp];
             }
-            else                                  //如果是0xFFFFFFFF,延续上次状态
+            else if (results.value == nul)        //如果是0xFFFFFFFF,延续上次状态
             {
                 analogWrite(spd1, nowspd);         //设置速度
                 analogWrite(spd2, nowspd);
