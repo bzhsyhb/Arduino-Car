@@ -21,3 +21,7 @@
 * 面包板、面包线和杜邦线等
 <br/><br/>
 用到的库:[IRremote](https://github.com/z3t0/Arduino-IRremote)
+
+<br/>
+放一张小车照片：<br/>
+<img src="http://7xlrda.com1.z0.glb.clouddn.com/car-pic.png" width="500px" />
